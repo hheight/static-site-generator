@@ -2,15 +2,19 @@ import os
 import shutil
 
 from copystatic import copy_files
+from generatepage import generate_page
 
-dest_dir = "./public"
-source_dir = "./static"
+dir_path_public = "public"
+dir_path_static = "static"
+dir_path_content = "content"
+template_path = "template.html"
 
 def main():
-    if os.path.exists(dest_dir):
-       shutil.rmtree(dest_dir)
+    if os.path.exists(dir_path_public):
+       shutil.rmtree(dir_path_public)
 
-    copy_files(source_dir, dest_dir)
+    copy_files(dir_path_static, dir_path_public)
 
+    generate_page(os.path.join(dir_path_content, "index.md"), template_path, os.path.join(dir_path_public, "index.html"))
 
 main()

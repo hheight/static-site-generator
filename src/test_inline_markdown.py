@@ -1,9 +1,9 @@
 import unittest
 
-from inline_markdown import extract_markdown_images, extract_markdown_links, split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
+from inline_markdown import extract_markdown_images, extract_markdown_links, extract_title, split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
 from textnode import TextNode, TextType
 
-class TestSplitDelimiter(unittest.TestCase):
+class TestInlineMarkdown(unittest.TestCase):
     def test_code_delim(self):
         node = TextNode("This is text with a `code block` word", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
@@ -87,7 +87,6 @@ class TestSplitDelimiter(unittest.TestCase):
         with self.assertRaises(ValueError):
             split_nodes_delimiter([node], "_", TextType.ITALIC)
 
-class TestExtractMarkdown(unittest.TestCase):
     def test_extract_markdown_images(self):
         matches = extract_markdown_images(
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
@@ -100,7 +99,6 @@ class TestExtractMarkdown(unittest.TestCase):
         )
         self.assertListEqual([("to boot dev", "https://www.boot.dev")], matches)
 
-class TestSplitNodes(unittest.TestCase):
     def test_split_images(self):
         node = TextNode(
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
@@ -146,7 +144,6 @@ class TestSplitNodes(unittest.TestCase):
             new_nodes,
         )
 
-class TestTextToTextnodes(unittest.TestCase):
     def test_text_to_textnodes(self):
         text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
 
@@ -165,6 +162,17 @@ class TestTextToTextnodes(unittest.TestCase):
             ],
             text_to_textnodes(text)
         )
+
+    def test_extract_title(self):
+        md = "# Heading 1"
+        self.assertEqual(extract_title(md), "Heading 1")
+
+    def test_extract_title_multiline(self):
+        md = """
+    Some text
+    # Heading 1
+    """
+        self.assertEqual(extract_title(md), "Heading 1")
 
 
 if __name__ == "__main__":
